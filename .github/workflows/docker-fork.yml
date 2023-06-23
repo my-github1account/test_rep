@@ -12,6 +12,7 @@ jobs:
       - name: ECHO
         run: |
           echo "github.event issue.pull_request ${{github.event.issue.pull_request}}"
+          echo "github.event issue.pull_request ${{toJSON(github.event.issue.pull_request)}}"
           echo "github.event pull_request.head.repo.fork ${{github.event.pull_request.head.repo.fork == true}}"
           echo "github.event pull_request.base.ref ${{github.event.pull_request.base.ref}}"
           echo "github.event comment.author_association ${{github.event.comment.author_association}}"
