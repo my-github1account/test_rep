@@ -6,19 +6,13 @@ on:
 jobs:
   publish:
     if: ${{github.event.issue.pull_request}} && ${{github.event.pull_request.head.repo.fork == true}} && ${{github.event.pull_request.base.ref == 'master'}} && ${{github.event.comment.author_association == 'MEMBER'}} && ${{startsWith(github.event.comment.body, '/build')}}
-        
     name: Publish images
     runs-on: ubuntu-22.04
     steps:
-      - name: Get PR branch
-        uses: xt0rted/pull-request-comment-branch@v1
-        id: comment-branch
-
-      - name: Set latest commit status as pending
-        uses: myrotvorets/set-commit-status-action@master
-        with:
-          sha: ${{ steps.comment-branch.outputs.head_sha }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          status: pending
       - name: ECHO
-        run: echo "TEST ECHO"
+        run: |
+          echo "github.event issue.pull_request ${{github.event.issue.pull_request}}"
+          echo "github.event pull_request.head.repo.fork ${{github.event.pull_request.head.repo.fork == true}}"
+          echo "github.event pull_request.base.ref == 'master' ${{github.event.pull_request.base.ref == 'master'}}"
+          echo "github.event comment.author_association == 'MEMBER' ${{github.event.comment.author_association == 'MEMBER'}}"
+          echo "startsWith(github.event comment.body, '/build')} ${{startsWith(github.event.comment.body, '/build')}}""
