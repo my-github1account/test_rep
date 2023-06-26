@@ -21,7 +21,7 @@ jobs:
         if: ${{contains(fromJSON('["master", "main"]'), steps.comment-branch.outputs.head_ref)}} ||\ 
             ${{startsWith(steps.comment-branch.outputs.head_ref, 'feature/')}} ||\ 
             ${{startsWith(steps.comment-branch.outputs.head_ref, 'hotfix/')}}
-        uses: myrotvorets/set-commit-status-action@1.1.7
+        uses: myrotvorets/set-commit-status-action@master
         with:
           sha: ${{ steps.comment-branch.outputs.head_sha }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
         with:
           ref: ${{ steps.comment-branch.outputs.head_ref }}
       - name: Set latest commit status as ${{ job.status }}
-        uses: myrotvorets/set-commit-status-action@1.1.7
+        uses: myrotvorets/set-commit-status-action@master
         if: always()
         with:
           sha: ${{ steps.comment-branch.outputs.head_sha }}
