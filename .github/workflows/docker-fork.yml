@@ -6,11 +6,11 @@ on:
 jobs:
   publish:
     name: Publish images
-    if: ${{github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/builds')}} 
+    if: ${{github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/build') && github.event.comment.author_association == MEMBER}} 
     runs-on: ubuntu-22.04
     steps:
       - name: ECHO
         run: |
           echo "github.event.issue.pull_request != null ${{github.event.issue.pull_request != null}}"
           echo "github.event.comment.author_association ${{github.event.comment.author_association}}"
-          echo "startsWith(github.event.comment.body, '/builds') ${{ startsWith(github.event.comment.body, '/builds') }}"
+          echo "startsWith(github.event.comment.body, '/builds') ${{ startsWith(github.event.comment.body, '/build') }}"
