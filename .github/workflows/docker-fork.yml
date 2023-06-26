@@ -8,9 +8,17 @@ jobs:
     name: Publish images
     permissions:
       statuses: write
-    if: ${{github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/build') && github.event.comment.author_association == 'MEMBER'}} 
+    if: ${{github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/build') && github.event.comment.author_association == 'MEMBER'}}
+    strategy:
+      matrix:
+        servis: [api, checker, cli, notifier, filter]
     runs-on: ubuntu-22.04
     steps:
+      - name: ECHO
+        run: |
+          echo "github.event.issue.pull_request != null ${{github.event.issue.pull_request != null}}"
+          echo "github.event.comment.author_association ${{github.event.comment.author_association}}"
+          echo "startsWith(github.event.comment.body, '/builds') ${{ startsWith(github.event.comment.body, '/build') }}"
       - name: Get PR branch
         uses: xt0rted/pull-request-comment-branch@v1
         id: comment-branch
@@ -27,6 +35,16 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ steps.comment-branch.outputs.head_ref }}
+
+      - name: Comment PR with build tag:
+        uses: mshick/add-pr-comment@v2
+        if: always()
+        with:
+          message-success:
+            "Build and push Docker image of ${{ matrix.service }} with tag moira/${{matrix.servis}}-unstable:${{env.DOCKER_TAG}}"
+          message-failure:
+            "Build service ${{ matrix.service }} was failed"
+            
       - name: Set latest commit status as ${{ job.status }}
         uses: myrotvorets/set-commit-status-action@master
         if: always()
