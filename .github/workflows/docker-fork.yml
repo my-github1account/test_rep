@@ -1,15 +1,15 @@
 name: Build and publish image from fork
 on:
-  pull_request:
-    types: edited
+  issue_comment:
+    types: created
 
 jobs:
   publish:
     name: Publish images
+    if: ${{ github.event.issue.pull_request }} && ${{ startsWith(github.event.comment.body, '/builds') }} 
     runs-on: ubuntu-22.04
     steps:
       - name: ECHO
         run: |
-          echo "github.event pull_request.head.repo.fork ${{github.event.pull_request.head.repo.fork == true}}"
-          echo "github.event pull_request.base.ref ${{github.event.pull_request.base.ref}}"
-          echo "github.event pull_request.comments ${{toJSON(github.event.pull_request.comments)}}"
+          echo "github.event.issue.pull_request ${{github.event.issue.pull_request}}"
+          echo "startsWith(github.event.comment.body, '/builds') ${{ startsWith(github.event.comment.body, '/builds') }}"
