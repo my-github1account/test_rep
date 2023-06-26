@@ -17,9 +17,23 @@ jobs:
       - name: Get PR branch
         uses: xt0rted/pull-request-comment-branch@v1
         id: comment-branch
-      - name: ECHO BRANCH NAME
+      - name: Set latest commit status as pending
         if: ${{contains(fromJSON('["master", "main"]'), steps.comment-branch.outputs.head_ref)}} ||\ 
             ${{startsWith(steps.comment-branch.outputs.head_ref, 'feature/')}} ||\ 
             ${{startsWith(steps.comment-branch.outputs.head_ref, 'hotfix/')}}
-        run: |
-          echo "steps.comment-branch.outputs.head_ref ${{ steps.comment-branch.outputs.head_ref }}"
+        uses: myrotvorets/set-commit-status-action@1.1.7
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+      - name: Set latest commit status as ${{ job.status }}
+        uses: myrotvorets/set-commit-status-action@1.1.7
+        if: always()
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
