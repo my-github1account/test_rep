@@ -6,7 +6,7 @@ on:
 jobs:
   publish:
     name: Publish images
-    if: ${{github.event.issue.pull_request != null}} && ${{ startsWith(github.event.comment.body, '/builds') }} 
+    if: ${{github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/builds') }} 
     runs-on: ubuntu-22.04
     steps:
       - name: ECHO
