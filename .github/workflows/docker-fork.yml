@@ -18,6 +18,6 @@ jobs:
         uses: xt0rted/pull-request-comment-branch@v1
         id: comment-branch
       - name: ECHO BRANCH NAME
-        if: ${{contains(['master', 'main'], steps.comment-branch.outputs.head_ref) || startsWith(steps.comment-branch.outputs.head_ref, 'feature/') startsWith(steps.comment-branch.outputs.head_ref, 'hotfix/')}}
+        if: ${{contains(formJSON('["master", "main"]'), steps.comment-branch.outputs.head_ref) || startsWith(steps.comment-branch.outputs.head_ref, 'feature/') startsWith(steps.comment-branch.outputs.head_ref, 'hotfix/')}}
         run: |
           echo "steps.comment-branch.outputs.head_ref ${{ steps.comment-branch.outputs.head_ref }}"
