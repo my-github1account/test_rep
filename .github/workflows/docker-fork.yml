@@ -14,3 +14,9 @@ jobs:
           echo "github.event.issue.pull_request != null ${{github.event.issue.pull_request != null}}"
           echo "github.event.comment.author_association ${{github.event.comment.author_association}}"
           echo "startsWith(github.event.comment.body, '/builds') ${{ startsWith(github.event.comment.body, '/build') }}"
+      - name: Get PR branch
+        uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+      - name: ECHO BRANCH NAME
+        run: |
+          echo "steps.comment-branch.outputs.head_ref ${{ steps.comment-branch.outputs.head_ref }}"
