@@ -36,7 +36,7 @@ jobs:
         with:
           ref: ${{ steps.comment-branch.outputs.head_ref }}
 
-      - name: Comment PR with build tag:
+      - name: Comment PR with build tag
         uses: mshick/add-pr-comment@v2
         if: always()
         with:
