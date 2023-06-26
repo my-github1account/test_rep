@@ -5,7 +5,6 @@ on:
 
 jobs:
   publish:
-    if: ${{github.event.pull_request.head.repo.fork == true}} && ${{github.event.pull_request.base.ref == 'master' || github.event.pull_request.base.ref == 'main'}}
     name: Publish images
     runs-on: ubuntu-22.04
     steps:
