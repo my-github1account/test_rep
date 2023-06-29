@@ -1,0 +1,76 @@
+name: Build and publish image from fork
+on:
+  issue_comment:
+    types: created
+
+jobs:
+  publish:
+    name: Publish images
+    permissions:
+      statuses: write
+      pull-requests: write
+    if: ${{github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/build') && github.event.comment.author_association == 'MEMBER'}}
+    strategy:
+      matrix:
+        servis: [api, checker, cli, notifier, filter]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: ECHO
+        run: |
+          echo "github.event.issue.pull_request != null ${{github.event.issue.pull_request != null}}"
+          echo "github.event.comment.author_association ${{github.event.comment.author_association}}"
+          echo "startsWith(github.event.comment.body, '/builds') ${{ startsWith(github.event.comment.body, '/build') }}"
+      - name: Get PR branch
+        uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+      - uses: actions/github-script@v6
+        id: get-pr
+        with:
+          script: |
+            const request = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            }
+            core.info(`Getting PR #${request.pull_number} from ${request.owner}/${request.repo}`)
+            try {
+              const result = await github.pulls.get(request)
+              return result.data
+            } catch (err) {
+              core.setFailed(`Request failed with error ${err}`)
+            }
+      - name: Set latest commit status as pending
+        if: ${{contains(fromJSON('["master", "main"]'), steps.comment-branch.outputs.head_ref)}} ||\ 
+            ${{startsWith(steps.comment-branch.outputs.head_ref, 'feature/')}} ||\ 
+            ${{startsWith(steps.comment-branch.outputs.head_ref, 'hotfix/')}}
+        uses: myrotvorets/set-commit-status-action@master
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ fromJSON(steps.get-pr.outputs.result).head.repo.full_name }}
+          ref: ${{ fromJSON(steps.get-pr.outputs.result).head.sha }}
+          
+      - name: Build docker tag
+        run: echo "DOCKER_TAG=$(echo ${GITHUB_REF_NAME////-}.$(date '+%Y-%m-%d').${GITHUB_SHA:0:7})" >> $GITHUB_ENV
+        
+      - name: Comment PR with build tag
+        uses: mshick/add-pr-comment@v2
+        if: always()
+        with:
+          allow-repeats: true
+          message-success:
+            "Build and push Docker image of ${{ matrix.service }} with tag moira/${{matrix.servis}}-unstable:${{env.DOCKER_TAG}}"
+          message-failure:
+            "Build service ${{ matrix.service }} was failed"
+            
+      - name: Set latest commit status as ${{ job.status }}
+        uses: myrotvorets/set-commit-status-action@master
+        if: always()
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
