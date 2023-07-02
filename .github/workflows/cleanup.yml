@@ -1,1 +1,19 @@
-
+name: Delete skipped docker-feature runs
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+jobs:
+  del_runs:
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: write
+    steps:
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 1
+          keep_minimum_runs: 1
+          delete_workflow_pattern: "docker-fork.yml"
+          delete_run_by_conclusion_patter: "skipped"
