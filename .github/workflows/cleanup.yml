@@ -4,7 +4,7 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
     inputs:
-      delete_run_by_conclusion_patter:
+      delete_run_by_conclusion_pattern:
         default: "skipped"
         type: choice
         options:
@@ -30,4 +30,4 @@ jobs:
           retain_days: 0
           keep_minimum_runs: 0
           delete_workflow_pattern: "docker-fork.yml"
-          delete_run_by_conclusion_patter: "skipped"
+          delete_run_by_conclusion_pattern: "skipped"
