@@ -59,9 +59,10 @@ jobs:
           ref: ${{ fromJSON(steps.get-pr.outputs.result).head.sha }}
           
       - name: Build docker tag
+        env:
+          BRANCH_NAME: ${{fromJSON(steps.get-pr.outputs.result).head.repo.full_name}}
+          COMMIT_SHA: ${{ fromJSON(steps.get-pr.outputs.result).head.sha }}
         run: |
-          BRANCH_NAME = ${{fromJSON(steps.get-pr.outputs.result).head.repo.full_name}}
-          COMMIT_SHA = ${{ fromJSON(steps.get-pr.outputs.result).head.sha }}
           echo "${BRANCH_NAME} ${COMMIT_SHA} ${GITHUB_REF_NAME} ${GITHUB_SHA}"
           echo "DOCKER_TAG=$(echo ${BRANCH_NAME////-}.$(date '+%Y-%m-%d').${COMMIT_SHA:0:7})" >> $GITHUB_ENV
         
