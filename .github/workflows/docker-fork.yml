@@ -62,8 +62,8 @@ jobs:
         run: |
           BRANCH_NAME = ${{fromJSON(steps.get-pr.outputs.result).head.repo.full_name}}
           COMMIT_SHA = ${{ fromJSON(steps.get-pr.outputs.result).head.sha }}
-          echo "${GITHUB_BRANCH_NAME} ${COMMIT_SHA} ${GITHUB_REF_NAME} ${GITHUB_SHA}"
-          echo "DOCKER_TAG=$(echo ${GITHUB_BRANCH_NAME////-}.$(date '+%Y-%m-%d').${GITHUB_SHA:0:7})" >> $GITHUB_ENV
+          echo "${BRANCH_NAME} ${COMMIT_SHA} ${GITHUB_REF_NAME} ${GITHUB_SHA}"
+          echo "DOCKER_TAG=$(echo ${BRANCH_NAME////-}.$(date '+%Y-%m-%d').${COMMIT_SHA:0:7})" >> $GITHUB_ENV
         
       - name: Comment PR with build tag
         uses: mshick/add-pr-comment@v2
