@@ -39,6 +39,10 @@ jobs:
             } catch (err) {
               core.setFailed(`Request failed with error ${err}`)
             }
+      - name: ECHO TEST
+        run: |
+          echo "${{fromJSON(steps.get-pr.outputs.result)}}"
+          
       - name: Set latest commit status as pending
         if: ${{contains(fromJSON('["master", "main"]'), steps.comment-branch.outputs.head_ref)}} ||\ 
             ${{startsWith(steps.comment-branch.outputs.head_ref, 'feature/')}} ||\ 
