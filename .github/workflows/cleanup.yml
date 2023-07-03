@@ -1,7 +1,7 @@
 name: Delete skipped docker-feature runs
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
     inputs:
       delete_run_by_conclusion_pattern:
