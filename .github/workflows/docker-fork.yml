@@ -41,7 +41,7 @@ jobs:
             }
       - name: ECHO TEST
         run: |
-          echo "${{fromJSON(steps.get-pr.outputs.result)}}"
+          echo "${{steps.get-pr.outputs.result}}"
           
       - name: Set latest commit status as pending
         if: ${{contains(fromJSON('["master", "main"]'), steps.comment-branch.outputs.head_ref)}} ||\ 
